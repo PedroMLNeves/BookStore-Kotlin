@@ -24,7 +24,13 @@ class MyListAdapter(context: Context, var bookInfoList: List<ResponseItems>, pri
 
         //binding.item = items[position]
         binding.title.text = bookInfoList[position].volumeInfo.title
-        binding.description.text = bookInfoList[position].volumeInfo.description
+        var authors = "Author/s:"
+        if( bookInfoList[position].volumeInfo.authors.isNotEmpty()){
+            for(author in  bookInfoList[position].volumeInfo.authors){
+                authors += " $author"
+            }
+        }
+        binding.author.text = authors
         Glide.with(context).load(bookInfoList[position].volumeInfo.imageLinks.thumbnail.replace("http", "https")).into(binding.icon);
         binding.root.setOnClickListener{ onItemClicked(bookInfoList[position]) }
         return binding.root

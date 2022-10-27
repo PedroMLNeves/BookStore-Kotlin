@@ -25,7 +25,7 @@ class SecondFragment : Fragment() {
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
         return binding.root
@@ -40,7 +40,7 @@ class SecondFragment : Fragment() {
 
 
         if(arguments?.get("book") is ResponseItems){
-            var teste : ResponseItems = arguments?.get("book") as ResponseItems
+            val teste : ResponseItems = arguments?.get("book") as ResponseItems
 
             if(sharedPref.contains("favorite_book_" + teste.id)){
                 if(sharedPref.getBoolean("favorite_book_" + teste.id, false)){
@@ -70,8 +70,8 @@ class SecondFragment : Fragment() {
 
             binding.textviewTitle.text = String.format("Title: %s", teste.volumeInfo.title)
             binding.textviewDescription.text = String.format("Description: %s", teste.volumeInfo.description)
-            var authors = "Author:"
-            if(teste.volumeInfo.authors != null && teste.volumeInfo.authors.isNotEmpty()){
+            var authors = "Author/s:"
+            if(teste.volumeInfo.authors.isNotEmpty()){
                 for(author in teste.volumeInfo.authors){
                     authors += " $author"
                 }

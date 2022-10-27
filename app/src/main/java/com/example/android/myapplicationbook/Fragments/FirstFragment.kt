@@ -2,23 +2,20 @@ package com.example.android.myapplicationbook.Fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.example.android.myapplicationbook.ApiInterface
 import com.example.android.myapplicationbook.Model.ResponseItems
 import com.example.android.myapplicationbook.MyListAdapter
 import com.example.android.myapplicationbook.R
-import com.example.android.myapplicationbook.RetrofitClient
 import com.example.android.myapplicationbook.ViewModel.MainViewModel
 import com.example.android.myapplicationbook.databinding.FragmentFirstBinding
-import kotlinx.coroutines.runBlocking
 
 class FirstFragment : Fragment() {
 
@@ -28,17 +25,15 @@ class FirstFragment : Fragment() {
 
     private val binding get() = _binding!!
 
-    private var lastResult: Int = 0
-
     lateinit var myListAdapter: MyListAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
 
-        if(lastResult == 0 || lastResult != sharedViewModel.currentBook.value!!.size){
-            getBookList()
+        if(sharedViewModel.lastResult == 0 || sharedViewModel.lastResult != sharedViewModel.currentBook.value!!.size){
+            sharedViewModel.getBookList(sharedViewModel.apiInterface)
         }
 
 
@@ -58,17 +53,15 @@ class FirstFragment : Fragment() {
         binding.listView.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
                 val lastVisiblePosition = binding.listView.lastVisiblePosition
-                Log.e("POG", "POG$lastVisiblePosition - lastResult - $lastResult")
                 val lastPos: Int = sharedViewModel.currentBook.value!!.size - 1
                 if(lastVisiblePosition == lastPos){
 
-                    getBookList()
-                    Log.e("POG", "POG")
+                    sharedViewModel.getBookList(sharedViewModel.apiInterface)
                 }
             }
 
             override fun onScroll(p0: AbsListView, p1: Int, p2: Int, p3: Int) {
-                val totalItemCount = p0.checkedItemCount
+                //Not needed
             }
         })
 
@@ -127,34 +120,14 @@ class FirstFragment : Fragment() {
                 }
             }
         }
+
+        sharedViewModel.currentBook.observe(viewLifecycleOwner, Observer {
+            myListAdapter.updateList(sharedViewModel.currentBook.value!!)
+            myListAdapter.notifyDataSetChanged()
+        })
+
         return binding.root
 
-    }
-
-    private fun getBookList() = runBlocking {
-        Log.e("POG", "lastResult - $lastResult")
-
-
-
-
-        val retrofit = RetrofitClient.RetrofitClient.getInstance()
-        val apiInterface = retrofit.create(ApiInterface::class.java)
-        try {
-
-            val response = apiInterface.getAllBooks("ios",20,lastResult)
-            lastResult +=20
-            if (response.isSuccessful()) {
-
-                response.body()?.let { sharedViewModel.setResponseBook(it.items) }
-                myListAdapter.updateList(sharedViewModel.currentBook.value!!)
-                myListAdapter.notifyDataSetChanged()
-
-            } else {
-                Log.e("Error",response.errorBody().toString())
-            }
-        }catch (Ex:Exception){
-            Log.e("Error",Ex.localizedMessage)
-        }
     }
 
     override fun onDestroyView() {
