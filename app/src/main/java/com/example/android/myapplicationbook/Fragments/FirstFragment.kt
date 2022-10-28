@@ -11,9 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.example.android.myapplicationbook.*
 import com.example.android.myapplicationbook.Model.ResponseItems
-import com.example.android.myapplicationbook.MyListAdapter
-import com.example.android.myapplicationbook.R
 import com.example.android.myapplicationbook.ViewModel.MainViewModel
 import com.example.android.myapplicationbook.databinding.FragmentFirstBinding
 
@@ -31,9 +30,9 @@ class FirstFragment : Fragment() {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
-
+        sharedViewModel.init()
         if(sharedViewModel.lastResult == 0 || sharedViewModel.lastResult != sharedViewModel.currentBook.value!!.size){
-            sharedViewModel.getBookList(sharedViewModel.apiInterface)
+            sharedViewModel.getBookList()
         }
 
 
@@ -56,7 +55,7 @@ class FirstFragment : Fragment() {
                 val lastPos: Int = sharedViewModel.currentBook.value!!.size - 1
                 if(lastVisiblePosition == lastPos){
 
-                    sharedViewModel.getBookList(sharedViewModel.apiInterface)
+                    sharedViewModel.getBookList()
                 }
             }
 

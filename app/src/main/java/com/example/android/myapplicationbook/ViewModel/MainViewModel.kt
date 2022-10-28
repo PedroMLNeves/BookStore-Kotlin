@@ -4,13 +4,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.android.myapplicationbook.ApiInterface
+import com.example.android.myapplicationbook.*
 import com.example.android.myapplicationbook.Model.ResponseItems
-import com.example.android.myapplicationbook.RetrofitClient
 import kotlinx.coroutines.runBlocking
-import retrofit2.Retrofit
+import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
+class MainViewModel @Inject constructor(): ViewModel() {
 
     private val _currentBook: MutableLiveData<List<ResponseItems>> = MutableLiveData()
     val currentBook: LiveData<List<ResponseItems>> = _currentBook
@@ -23,8 +22,12 @@ class MainViewModel : ViewModel() {
 
     var lastResult: Int = 0
 
-    val retrofit: Retrofit = RetrofitClient.RetrofitClient.getInstance()
-    val apiInterface: ApiInterface = retrofit.create(ApiInterface::class.java)
+    @Inject
+    lateinit var apiInterface: ApiInterface
+
+    fun init(){
+        DaggerAppComponent.builder().appModule(AppModule(this)).networkModule(NetworkModule()).build().inject(this)
+    }
 
     fun setResponseBook(responseItems: List<ResponseItems>){
         if(this._currentBook.value != null){
@@ -47,7 +50,7 @@ class MainViewModel : ViewModel() {
         this._allItems.value = _currentBook.value
     }
 
-    fun getBookList(apiInterface: ApiInterface) = runBlocking {
+    fun getBookList() = runBlocking {
         try {
 
             val response = apiInterface.getAllBooks("ios",20,lastResult)

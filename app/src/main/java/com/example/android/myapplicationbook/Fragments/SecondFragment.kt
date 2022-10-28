@@ -71,7 +71,7 @@ class SecondFragment : Fragment() {
             binding.textviewTitle.text = String.format("Title: %s", teste.volumeInfo.title)
             binding.textviewDescription.text = String.format("Description: %s", teste.volumeInfo.description)
             var authors = "Author/s:"
-            if(teste.volumeInfo.authors.isNotEmpty()){
+            if(teste.volumeInfo.authors != null && teste.volumeInfo.authors.isNotEmpty()){
                 for(author in teste.volumeInfo.authors){
                     authors += " $author"
                 }
