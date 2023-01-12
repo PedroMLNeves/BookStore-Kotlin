@@ -3,13 +3,12 @@ package com.example.android.myapplicationbook.ViewModel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.android.myapplicationbook.*
 import com.example.android.myapplicationbook.Model.ResponseItems
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(): ViewModel() {
+class MainViewModel @Inject constructor(private val apiInterface: ApiInterface){
 
     private val _currentBook: MutableLiveData<List<ResponseItems>> = MutableLiveData()
     val currentBook: LiveData<List<ResponseItems>> = _currentBook
@@ -21,13 +20,6 @@ class MainViewModel @Inject constructor(): ViewModel() {
     val allItems: LiveData<List<ResponseItems>> = _allItems
 
     var lastResult: Int = 0
-
-    @Inject
-    lateinit var apiInterface: ApiInterface
-
-    fun init(){
-        DaggerAppComponent.builder().appModule(AppModule(this)).networkModule(NetworkModule()).build().inject(this)
-    }
 
     fun setResponseBook(responseItems: List<ResponseItems>){
         if(this._currentBook.value != null){

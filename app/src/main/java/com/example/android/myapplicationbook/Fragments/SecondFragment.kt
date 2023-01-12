@@ -6,9 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.android.myapplicationbook.Activity.MainActivity
 import com.example.android.myapplicationbook.Model.ResponseItems
 import com.example.android.myapplicationbook.R
 import com.example.android.myapplicationbook.ViewModel.MainViewModel
@@ -18,14 +18,13 @@ class SecondFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
 
-    private val sharedViewModel: MainViewModel by activityViewModels()
+    lateinit var sharedViewModel: MainViewModel
 
     private val binding get() = _binding!!
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+
+        sharedViewModel = (activity as MainActivity).viewModel
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
         return binding.root
@@ -78,7 +77,7 @@ class SecondFragment : Fragment() {
             }
             binding.textviewAuthor.text = authors
             binding.textviewNumPages.text = String.format("NumPages: %s", teste.volumeInfo.pageCount.toString())
-            Glide.with(this).load(teste.volumeInfo.imageLinks.thumbnail.replace("http", "https")).into(binding.image);
+            Glide.with(this).load(teste.volumeInfo.imageLinks.thumbnail.replace("http", "https")).into(binding.image)
         }
 
 

@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.android.myapplicationbook.*
+import com.example.android.myapplicationbook.Activity.MainActivity
 import com.example.android.myapplicationbook.Model.ResponseItems
 import com.example.android.myapplicationbook.ViewModel.MainViewModel
 import com.example.android.myapplicationbook.databinding.FragmentFirstBinding
@@ -20,17 +21,18 @@ class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
 
-    private val sharedViewModel: MainViewModel by activityViewModels()
+    lateinit var sharedViewModel: MainViewModel
 
     private val binding get() = _binding!!
 
-    lateinit var myListAdapter: MyListAdapter
+    private lateinit var myListAdapter: MyListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
 
+        sharedViewModel = (activity as MainActivity).viewModel
+
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
-        sharedViewModel.init()
         if(sharedViewModel.lastResult == 0 || sharedViewModel.lastResult != sharedViewModel.currentBook.value!!.size){
             sharedViewModel.getBookList()
         }
